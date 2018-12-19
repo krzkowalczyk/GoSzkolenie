@@ -24,12 +24,27 @@ func main() {
 	}
 
 	fmt.Println("Wyjście z pętli i1: " + strconv.Itoa(i1))
-
+	//for numer 3
 	wynik3 := 0
 	for i2 := 0; i2 < 30; i2++ {
 		wynik3 = i2
 	}
 
 	fmt.Printf("%d\n", wynik3)
-	fmt.Printf("Dupa Dupa")
+
+	//for numer 4
+	suma := 0
+	for suma < 1000 {
+		suma += 5
+	}
+
+	fmt.Printf("A to jest %d \n", suma)
+
+	//for numer 5
+	imionka := []string{"Dżoanna", "Dżonatan", "Dżastinek", "Dżejson"}
+	fmt.Println(imionka)
+
+	for index, value := range imionka {
+		fmt.Printf("Indeks %d, imię %s\n", index, value)
+	}
 }
