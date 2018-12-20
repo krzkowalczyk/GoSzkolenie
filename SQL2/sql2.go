@@ -5,18 +5,27 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/denisenkom/go-mssqldb"
 )
 
-var server = "localhost"
-var user = "sa"
-var port = 1433
-var password = "P@ssword"
-var database = "testdb"
+var server = getEnv("SQL_SERVER", "localhost")
+var user = getEnv("SQL_USER", "sa")
+var port = getEnv("SQL_PORT", "1433")
+var password = getEnv("SQL_PASSWORD", "P@ssword")
+var database = getEnv("SQL_DATABASE", "testdb")
+
+func getEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return defaultValue
+	}
+	return value
+}
 
 func main() {
-	cnstr := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;", server, user, password, port, database)
+	cnstr := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%s;database=%s;", server, user, password, port, database)
 	fmt.Println(cnstr)
 
 	iloscr, err := czytajdb(cnstr)
