@@ -87,7 +87,7 @@ func dodaj(cnstr string) (int64, error) {
 		log.Fatal("Problem puli połączenia: ", err.Error())
 	}
 
-	var zapins = "insert into (name, location) values('Jaroslaw K','Moskwa')"
+	var zapins = "insert into TestSchema.Employees (name, location) values ('Jaroslaw K','Moskwa')"
 
 	skladnia, err := db.Prepare(zapins)
 	if err != nil {
