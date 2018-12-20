@@ -50,6 +50,16 @@ func main() {
 		log.Fatal(erraktu)
 	}
 	log.Printf("Zaktualizowany ID to: %d", zaktualizowaneid)
+
+	var usunieteid int
+	var errusun error
+
+	usunieteid, errusun = usun(cnstr, 1)
+	if errusun != nil {
+		log.Fatal(errusun)
+	}
+	log.Printf("Zaktualizowany ID to: %d", usunieteid)
+
 	//defer db.Close()
 }
 
@@ -130,6 +140,43 @@ func aktualizuj(cnstr string, id int, name string, location string) (int, error)
 	result, errctx := skladnia.ExecContext(ctx, newakt,
 		sql.Named("name", name),
 		sql.Named("location", location),
+		sql.Named("id", id),
+	)
+
+	if errctx != nil {
+		log.Fatal("Problem z execcontext: ", errctx.Error())
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if rows != 1 {
+		log.Fatal("Panika ", err.Error())
+	}
+
+	log.Println("Gicior")
+	connclose(db)
+	return id, err
+
+}
+
+func usun(cnstr string, id int) (int, error) {
+	var err error
+	db, ctx, errdb := connopen(cnstr)
+	if errdb != nil {
+		log.Fatal("Problem z db prepare: ", err.Error())
+	}
+
+	statement := fmt.Sprintf("delete from Testschema.Employees where id=%d", id)
+
+	skladnia, err := db.Prepare(statement)
+	if err != nil {
+		log.Fatal("Problem z db prepare: ", err.Error())
+	}
+	defer skladnia.Close()
+
+	result, errctx := skladnia.ExecContext(ctx, statement,
 		sql.Named("id", id),
 	)
 
