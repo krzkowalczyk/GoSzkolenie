@@ -3,3 +3,5 @@ SQL/debug
 .vscode/launch.json
 SQL2/debug
 .gitignore
+SQL3/strzelictypa.go
+SQL3/debug
