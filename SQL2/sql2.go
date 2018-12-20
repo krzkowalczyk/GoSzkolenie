@@ -55,18 +55,10 @@ func main() {
 
 func czytajdb(cnstr string) (int, error) {
 	var err error
-	db, err := sql.Open("sqlserver", cnstr)
-
-	if err != nil {
-		log.Fatal("Błąd sterownika: ", err.Error())
+	db, ctx, errdb := connopen(cnstr)
+	if errdb != nil {
+		log.Fatal("Problem z db prepare: ", err.Error())
 	}
-	ctx := context.Background()
-	err = db.PingContext(ctx)
-
-	if err != nil {
-		log.Fatal("Problem puli połączenia: ", err.Error())
-	}
-
 	sqlq := "select * from TestSchema.Employees"
 	rows, errq := db.QueryContext(ctx, sqlq)
 	if errq != nil {
@@ -87,23 +79,16 @@ func czytajdb(cnstr string) (int, error) {
 	}
 
 	defer rows.Close()
+	connclose(db)
 	return count, errq
 }
 
 func dodaj(cnstr string, name string, location string) (int64, error) {
 	var err error
-	db, err := sql.Open("sqlserver", cnstr)
-
-	if err != nil {
-		log.Fatal("Błąd sterownika: ", err.Error())
+	db, ctx, errdb := connopen(cnstr)
+	if errdb != nil {
+		log.Fatal("Problem z db prepare: ", err.Error())
 	}
-	ctx := context.Background()
-	err = db.PingContext(ctx)
-
-	if err != nil {
-		log.Fatal("Problem puli połączenia: ", err.Error())
-	}
-
 	var zapins = "insert into TestSchema.Employees (name, location) values (@name,@location); select @@identity;"
 
 	skladnia, err := db.Prepare(zapins)
@@ -122,21 +107,15 @@ func dodaj(cnstr string, name string, location string) (int64, error) {
 		log.Fatal("Błąd w wyniku zapytania: ", err.Error())
 	}
 	log.Println("Gicior")
+	connclose(db)
 	return noweid, err
 }
 
 func aktualizuj(cnstr string, id int, name string, location string) (int, error) {
 	var err error
-	db, err := sql.Open("sqlserver", cnstr)
-
-	if err != nil {
-		log.Fatal("Błąd sterownika: ", err.Error())
-	}
-	ctx := context.Background()
-	err = db.PingContext(ctx)
-
-	if err != nil {
-		log.Fatal("Problem puli połączenia: ", err.Error())
+	db, ctx, errdb := connopen(cnstr)
+	if errdb != nil {
+		log.Fatal("Problem z db prepare: ", err.Error())
 	}
 	var aktualizacja = "update Testschema.Employees set name=@name, location=@location where id=@id"
 
@@ -167,5 +146,28 @@ func aktualizuj(cnstr string, id int, name string, location string) (int, error)
 	}
 
 	log.Println("Gicior")
+	connclose(db)
 	return id, err
+
+}
+
+func connopen(cnstr string) (*sql.DB, context.Context, error) {
+	var err error
+	db, err := sql.Open("sqlserver", cnstr)
+
+	if err != nil {
+		log.Fatal("Błąd sterownika: ", err.Error())
+	}
+	ctx := context.Background()
+	err = db.PingContext(ctx)
+
+	if err != nil {
+		log.Fatal("Problem puli połączenia: ", err.Error())
+	}
+
+	return db, ctx, err
+}
+
+func connclose(db *sql.DB) {
+	defer db.Close()
 }
