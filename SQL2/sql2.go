@@ -1,8 +1,8 @@
-package mai
+package main
 
 import (
 	"context"
-	"database/sql"
+	"database/sql
 	"fmt"
 	"log"
 
