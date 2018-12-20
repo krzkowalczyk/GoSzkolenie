@@ -45,7 +45,7 @@ func main() {
 	var zaktualizowaneid int
 	var erraktu error
 
-	zaktualizowaneid, erraktu = aktualizuj(cnstr, 3, "Dupa", "Jasiu")
+	zaktualizowaneid, erraktu = aktualizuj(cnstr, 3, "Pupa", "Jasiu")
 	if erraktu != nil {
 		log.Fatal(erraktu)
 	}
@@ -54,7 +54,7 @@ func main() {
 	var usunieteid int
 	var errusun error
 
-	usunieteid, errusun = usun(cnstr, 1)
+	usunieteid, errusun = usun(cnstr, 3)
 	if errusun != nil {
 		log.Fatal(errusun)
 	}
@@ -135,8 +135,7 @@ func aktualizuj(cnstr string, id int, name string, location string) (int, error)
 	}
 	defer skladnia.Close()
 
-	newakt := fmt.Sprintf("update Testschema.Employees set name='%s', location='%s' where id=%d;", name, location, id)
-
+	newakt := fmt.Sprintf("update Testschema.Employees set name='@name', location='@location' where id=@id;")
 	result, errctx := skladnia.ExecContext(ctx, newakt,
 		sql.Named("name", name),
 		sql.Named("location", location),
@@ -168,7 +167,7 @@ func usun(cnstr string, id int) (int, error) {
 		log.Fatal("Problem z db prepare: ", err.Error())
 	}
 
-	statement := fmt.Sprintf("delete from Testschema.Employees where id=%d", id)
+	statement := fmt.Sprintf("delete from Testschema.Employees where id=@id")
 
 	skladnia, err := db.Prepare(statement)
 	if err != nil {
