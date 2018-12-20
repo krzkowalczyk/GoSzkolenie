@@ -45,7 +45,7 @@ func main() {
 	var zaktualizowaneid int
 	var erraktu error
 
-	zaktualizowaneid, erraktu = aktualizuj(cnstr, 1, "Dupa", "Jasiu")
+	zaktualizowaneid, erraktu = aktualizuj(cnstr, 3, "Dupa", "Jasiu")
 	if erraktu != nil {
 		log.Fatal(erraktu)
 	}
@@ -58,7 +58,7 @@ func main() {
 	if errusun != nil {
 		log.Fatal(errusun)
 	}
-	log.Printf("Zaktualizowany ID to: %d", usunieteid)
+	log.Printf("Usunięty ID to: %d", usunieteid)
 
 	//defer db.Close()
 }
