@@ -27,12 +27,20 @@ func main() {
 
 	var noweid int64
 	var errdodawania error
-	noweid, errdodawania = dodaj(cnstr)
+	noweid, errdodawania = dodaj(cnstr, "Jas", "Fasola")
 	if errdodawania != nil {
 		log.Fatal(errdodawania)
 	}
 	log.Printf("NowododanyID to: %d", noweid)
 
+	var zaktualizowaneid int
+	var erraktu error
+
+	zaktualizowaneid, erraktu = aktualizuj(cnstr, 3, "Dupa", "Jasiu")
+	if erraktu != nil {
+		log.Fatal(erraktu)
+	}
+	log.Printf("Zaktualizowany ID to: %d", zaktualizowaneid)
 	//defer db.Close()
 }
 
@@ -73,7 +81,7 @@ func czytajdb(cnstr string) (int, error) {
 	return count, errq
 }
 
-func dodaj(cnstr string) (int64, error) {
+func dodaj(cnstr string, name string, location string) (int64, error) {
 	var err error
 	db, err := sql.Open("sqlserver", cnstr)
 
@@ -87,14 +95,14 @@ func dodaj(cnstr string) (int64, error) {
 		log.Fatal("Problem puli połączenia: ", err.Error())
 	}
 
-	var zapins = "insert into TestSchema.Employees (name, location) values ('Jaroslaw K','Moskwa'); select @@identity;"
+	var zapins = "insert into TestSchema.Employees (name, location) values (@name,@location); select @@identity;"
 
 	skladnia, err := db.Prepare(zapins)
 	if err != nil {
 		log.Fatal("Problem z db prepare: ", err.Error())
 	}
 	defer skladnia.Close()
-	var name, location string
+	//var name, location string
 	row := skladnia.QueryRowContext(ctx,
 		sql.Named("name", name),
 		sql.Named("location", location))
@@ -106,4 +114,44 @@ func dodaj(cnstr string) (int64, error) {
 	}
 	log.Println("Gicior")
 	return noweid, err
+}
+
+func aktualizuj(cnstr string, id int, name string, location string) (int, error) {
+	var err error
+	db, err := sql.Open("sqlserver", cnstr)
+
+	if err != nil {
+		log.Fatal("Błąd sterownika: ", err.Error())
+	}
+	ctx := context.Background()
+	err = db.PingContext(ctx)
+
+	if err != nil {
+		log.Fatal("Problem puli połączenia: ", err.Error())
+	}
+	var aktualizacja = "update Testschema.Employees set name=@name, location=@location where id=@id"
+
+	skladnia, err := db.Prepare(aktualizacja)
+	if err != nil {
+		log.Fatal("Problem z db prepare: ", err.Error())
+	}
+	defer skladnia.Close()
+
+	newakt := fmt.Sprintf("update Testschema.Employees set name='%s', location='%s' where id=%d;", name, location, id)
+
+	result, errctx := skladnia.ExecContext(ctx, newakt, sql.Named("name", name), sql.Named("location", location), sql.Named("id", id))
+	if errctx != nil {
+		log.Fatal("Problem z execcontext: ", errctx.Error())
+	}
+	fmt.Println("3")
+	rows, err := result.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if rows != 1 {
+		log.Fatal("Panika ", err.Error())
+	}
+
+	log.Println("Gicior")
+	return id, err
 }
