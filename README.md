@@ -1,2 +1,2 @@
 # GoSzkolenie
-Kody na szkoleniu z języka Go
+Kody na szkoleniu z języka Go 
