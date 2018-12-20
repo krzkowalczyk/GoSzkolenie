@@ -203,13 +203,13 @@ func connopen(cnstr string) (*sql.DB, context.Context, error) {
 	db, err := sql.Open("sqlserver", cnstr)
 
 	if err != nil {
-		log.Fatal("Błąd sterownika: ", err.Error())
+		log.Println("Błąd sterownika: ", err.Error())
 	}
 	ctx := context.Background()
 	err = db.PingContext(ctx)
 
 	if err != nil {
-		log.Fatal("Problem puli połączenia: ", err.Error())
+		log.Println("Problem puli połączenia: ", err.Error())
 	}
 
 	return db, ctx, err
