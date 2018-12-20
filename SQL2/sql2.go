@@ -199,7 +199,7 @@ func usun(cnstr string, id int) (int, error) {
 
 func connopen(cnstr string) (*sql.DB, context.Context, error) {
 	var err error
-	db, err := sql.Open("sqlserver", cnstr)
+	db, err := sql.Open("sqlservers", cnstr)
 
 	if err != nil {
 		log.Fatal("Błąd sterownika: ", err.Error())
