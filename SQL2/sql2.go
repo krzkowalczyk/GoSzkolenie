@@ -36,7 +36,7 @@ func main() {
 	var zaktualizowaneid int
 	var erraktu error
 
-	zaktualizowaneid, erraktu = aktualizuj(cnstr, 3, "Dupa", "Jasiu")
+	zaktualizowaneid, erraktu = aktualizuj(cnstr, 1, "Dupa", "Jasiu")
 	if erraktu != nil {
 		log.Fatal(erraktu)
 	}
@@ -139,11 +139,16 @@ func aktualizuj(cnstr string, id int, name string, location string) (int, error)
 
 	newakt := fmt.Sprintf("update Testschema.Employees set name='%s', location='%s' where id=%d;", name, location, id)
 
-	result, errctx := skladnia.ExecContext(ctx, newakt, sql.Named("name", name), sql.Named("location", location), sql.Named("id", id))
+	result, errctx := skladnia.ExecContext(ctx, newakt,
+		sql.Named("name", name),
+		sql.Named("location", location),
+		sql.Named("id", id),
+	)
+
 	if errctx != nil {
 		log.Fatal("Problem z execcontext: ", errctx.Error())
 	}
-	fmt.Println("3")
+
 	rows, err := result.RowsAffected()
 	if err != nil {
 		log.Fatal(err)
