@@ -6,14 +6,16 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
+	// _ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/krzkowalczyk/GoSzkolenie/MVC/model"
 )
 
 func main() {
 	log.Println("Starting app...")
 
-	db, err := gorm.Open("sqlite3", "test.db")
+	//	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("mssql", "server=localhost;user id=sa;password=P@ssw0rd;port=1433;database=testdb2;")
 	if err != nil {
 		panic("failed to connect database")
 	}
