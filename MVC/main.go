@@ -7,15 +7,15 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 
-	// _ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/krzkowalczyk/GoSzkolenie/MVC/model"
 )
 
 func main() {
 	log.Println("Starting app...")
 
-	//	db, err := gorm.Open("sqlite3", "test.db")
-	db, err := gorm.Open("mssql", "server=localhost;user id=sa;password=P@ssw0rd;port=1433;database=testdb2;")
+	db, err := gorm.Open("sqlite3", "test.db")
+	// db, err := gorm.Open("mssql", "server=localhost;user id=sa;password=P@ssw0rd;port=1433;database=testdb2;")
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -39,5 +39,5 @@ func main() {
 	router.HandleFunc("/people/{id}", GetPersonEndpoint).Methods("GET")
 	router.HandleFunc("/people", CreatePersonEndpoint).Methods("POST")
 	router.HandleFunc("/people/{id}", DeletePersonEndpoint).Methods("DELETE")
-	log.Fatal(http.ListenAndServeTLS(":8000", "server.cert", "server.key", router))
+	log.Fatal(http.ListenAndServe(":8000", router))
 }
